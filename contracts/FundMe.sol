@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.8;
 
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "./PriceConverter.sol";
 
 error NotOwner();
@@ -15,14 +16,17 @@ contract FundMe
 
     uint256 public constant MINIMUM_USD = 50 * 1e18;
 
+    AggregatorV3Interface public priceFeed;
+
     address[] public funders;
     mapping(address => uint256) public addressToAmountFunded;
 
     address public immutable owner;
 
-    constructor()
+    constructor(address priceFeedAddress)
     {
         owner = msg.sender;
+        priceFeed = AggregatorV3Interface(priceFeedAddress);
     }
 
     function fund() public payable
@@ -30,7 +34,7 @@ contract FundMe
         // We want to be able to set a minimum fund amount in USD
         // how do we send ETH to this contract?
         // 1e18 is 1 * 10^18 wei
-        require(msg.value.getConversionRate() >= MINIMUM_USD, "Didn't send enough");
+        require(msg.value.getConversionRate(priceFeed) >= MINIMUM_USD, "Didn't send enough");
         funders.push(msg.sender);
         addressToAmountFunded[msg.sender] += msg.value;
     }
