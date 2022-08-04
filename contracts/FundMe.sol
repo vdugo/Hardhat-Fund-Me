@@ -8,7 +8,7 @@ pragma solidity ^0.8.8;
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "./PriceConverter.sol";
 
-error NotOwner();
+error FundMe__NotOwner();
 
 contract FundMe
 {
@@ -27,6 +27,15 @@ contract FundMe
     {
         owner = msg.sender;
         priceFeed = AggregatorV3Interface(priceFeedAddress);
+    }
+
+    receive() external payable
+    {
+        fund();
+    }
+    fallback() external payable
+    {
+        fund();
     }
 
     function fund() public payable
@@ -62,17 +71,8 @@ contract FundMe
         // more gas efficient
         if (msg.sender != owner)
         {
-            revert NotOwner();
+            revert FundMe__NotOwner();
         }
         _;
-    }
-
-    receive() external payable
-    {
-        fund();
-    }
-    fallback() external payable
-    {
-        fund();
     }
 }
