@@ -25,7 +25,8 @@ module.exports = async ({ getNamedAccounts, deployments }) =>
     const fundMe = await deploy("FundMe", {
         from: deployer,
         args: args,
-        log: true
+        log: true,
+        waitConfirmations: network.config.blockConfirmations || 1,
     })
     log("FundMe deployed")
     // if we're not on development chains, then automatically verify the code on Etherscan
