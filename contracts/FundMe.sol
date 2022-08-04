@@ -29,15 +29,6 @@ contract FundMe
         priceFeed = AggregatorV3Interface(priceFeedAddress);
     }
 
-    receive() external payable
-    {
-        fund();
-    }
-    fallback() external payable
-    {
-        fund();
-    }
-
     function fund() public payable
     {
         // We want to be able to set a minimum fund amount in USD
