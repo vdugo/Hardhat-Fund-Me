@@ -33,5 +33,10 @@ module.exports = {
   },
   gasReporter: {
     enabled: true
-  }
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+  },
 };
